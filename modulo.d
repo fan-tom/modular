@@ -72,34 +72,46 @@ struct ModInt(V, M) if(is(typeof(V.init%M.init)))
 			return ModInt!(V,M)(gcd(),mod);
 		}
 
+		///Check if modules are the same
+		///
+		/// Params:
+		///
+		/// M1 =
+		/// M2 =
+		auto checkMod(M1, M2)(M1 m1, M2 m2) const pure
+		{
+			return m1==m2;
+		}
+
 	public:
 
 		//getter
-		@property auto value() const pure nothrow 
+		@property auto value() const pure nothrow
 		{
 			return value_;
 		}
 		
 		//setter
-		@property auto value(T)(T val_) nothrow 
+		@property auto value(T)(T val_) nothrow
 		{
 			value_=val_;
 		}
 
 		//getter
-		@property auto mod() const pure nothrow 
+		@property auto mod() const pure nothrow
 		{
 			return module_;
 		}
 
 		//setter
-		@property auto mod(T)(T mod_) nothrow 
+		@property auto mod(T)(T mod_) nothrow
 		{
 			module_=mod_;
 		}
 
 		//What can be reasonable init value for value_ and especially for module_?
 		@disable this();
+
 		this(in V val_, in M mod_){
 			module_=mod_;
 			value_=val_.mod(mod_);//(val_>=0?val_%mod:(mod-(-val_%mod)));
