@@ -3,11 +3,6 @@
 //    (See accompanying file LICENSE_1_0.txt or copy at
 //          http://www.boost.org/LICENSE_1_0.txt)
 //
-// Struct ModInt represents number that is reminder of division on the module,
-// which is also stored in structure.
-// All operations are available, some of tnem are done using special methods,
-// which do these operation more effective,
-// such as fast multiplying and exponentiation
 
 module modular;
 
@@ -46,6 +41,11 @@ unittest {
 	assert(BigInt(-11).mod(-8)==5);
 }
 
+// Struct ModInt represents number that is reminder of division on the module,
+// which is also stored in structure.
+// All operations are available, some of them are done using special methods,
+// which do these operation more effective,
+// such as fast multiplying and exponentiation
 struct ModInt(V, M) if(is(typeof(V.init%M.init)))
 {
 	private:
