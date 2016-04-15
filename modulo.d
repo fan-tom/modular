@@ -211,6 +211,7 @@ unittest{
 	assert(b.value==(3+10%4)%4);
 	assert(b.mod==4);
 	assert(( a/b ).value==2);
+	assert((ModInt!(int,uint)(15,11)^^3).value==9);
 }
 
 // Factory function to avoid explicit type indication using IFTI
