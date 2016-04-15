@@ -15,6 +15,14 @@ import std.traits;
 import std.conv;
 import std.math;
 
+// Exception thrown when operation cannot be done due to different modules
+// of arguments
+class ModulesAreNotTheSame:Exception{
+	this(string mes){
+		super(mes);
+	}
+}
+
 // Function that implements mathematic modulo division in opposite to native
 // D's '%' operator; particulary -1%4==-1 while -1.mod(4)==3. In other words
 // the result of a%b always satisfies 0<=a%b<|b|
