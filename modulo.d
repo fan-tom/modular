@@ -84,9 +84,14 @@ struct ModInt(V, M) if(is(typeof(V.init%M.init)))
 		///
 		/// Params:
 		///
-		/// M1 =
-		/// M2 =
-		auto checkMod(M1, M2)(M1 m1, M2 m2) const pure
+		/// M =
+		auto checkMod(M)(M m) const pure
+		{
+			return module_==m;
+		}
+
+		// Fast multiplication and exponentiation by consecutive doubling
+		auto fastOp(string op, T)(T rhs_) const
 		{
 			return m1==m2;
 		}
