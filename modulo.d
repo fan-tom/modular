@@ -167,7 +167,7 @@ struct ModInt(V, M) if(is(typeof(V.init%M.init)))
 				return infinity();*/
 			return ModInt(mixin("value"~op~"rhs"),mod);
 		}
-		const auto opBinary(string op, T)(in T rhs) if((op=="+" || op=="*" || op=="-") && is(T: ModInt))
+		const auto opBinary(string op, T)(in T rhs) if((op=="+" || op=="-") && is(T: ModInt))
 		out(result){
 			/*if(infinite || rhs.infinite)
 				assert(result.infinite,text(this.value,op,rhs.value,'=',result.value," mod ",result.mod));
@@ -195,6 +195,12 @@ struct ModInt(V, M) if(is(typeof(V.init%M.init)))
 			/*if(rhs.value==0)
 				return ModInt.infinity();*/
 			return this*rhs.inverse;
+		}
+
+		//Fast powering and multiplying
+		const auto opBinary(string op, T)(in T rhs) if(op=="^^" || op=="*" )
+		{
+			return ModInt(fastOp!op(rhs), module_);
 		}
 }
 unittest{
