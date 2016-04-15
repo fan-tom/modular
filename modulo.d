@@ -94,7 +94,29 @@ struct ModInt(V, M) if(is(typeof(V.init%M.init)))
 		// Fast multiplication and exponentiation by consecutive doubling
 		auto fastOp(string op, T)(T rhs_) const
 		{
-			return m1==m2;
+			static if(op=="*"){
+				enum lower="+";
+				V t=0;
+			}
+			else static if(op=="^^"){
+				enum lower="*";
+				V t=1;
+			}
+			else
+				static assert(false, "This operation: "~op~" cannot be done by consecutive doubling");
+
+			//what if T is class???
+			Unqual!T rhs=rhs_;
+			V res=value;
+			while(rhs>0){
+				if(rhs%2){
+					mixin("t=t"~lower~"res%module_;");
+					rhs-=1;
+				}
+				 mixin("res=res"~op~"2%module_;");
+				rhs/=2;
+			}
+			return t;
 		}
 
 	public:
