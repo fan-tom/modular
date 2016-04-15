@@ -54,7 +54,8 @@ struct ModInt(V, M) if(is(typeof(V.init%M.init)))
 		//bool _infinite=false;
 
 		auto inverse() const {
-			auto gcd() const {
+			// Extended Euclidean algorithm.
+			auto eea() const {
 				static if(is(typeof({ V v=M.init; })))
 				//V can be assigned from M
 					alias CommonType=V;
