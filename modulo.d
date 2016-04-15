@@ -78,7 +78,7 @@ struct ModInt(V, M) if(is(typeof(V.init%M.init)))
 					return yn>=0?yn:mod+yn;
 				throw new Error(text("Cannot calculate inverse for ",value," modulo ",mod));
 			}
-			return ModInt!(V,M)(gcd(),mod);
+			return ModInt!(V,M)(eea(),mod);
 		}
 
 		///Check if modules are the same
@@ -177,10 +177,10 @@ struct ModInt(V, M) if(is(typeof(V.init%M.init)))
 		body{
 			/*if(infinite || rhs.infinite)
 				return infinity();*/
-			if(mod==rhs.mod){
+			if(checkMod(rhs.mod)){
 				return ModInt(mixin("value"~op~"rhs.value"),mod);
 			}
-			throw new ModulesNotTheSame("Operands have different modiles: "~mod.to!string~" and "~rhs.mod.to!string);
+			throw new ModulesAreNotTheSame("Operands have different modiles: "~mod.to!string~" and "~rhs.mod.to!string);
 		}
 		const auto opBinary(string op, T)(in T rhs) if((op=="/") && is(T: ModInt))
 		out(result){
