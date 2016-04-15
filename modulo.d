@@ -182,12 +182,14 @@ struct ModInt(V, M) if(is(typeof(V.init%M.init)))
 			}
 			throw new ModulesAreNotTheSame("Operands have different modiles: "~mod.to!string~" and "~rhs.mod.to!string);
 		}
+
+		//Division is multiplication on inverse element a/b mod n =a*b^-1 mod n
 		const auto opBinary(string op, T)(in T rhs) if((op=="/") && is(T: ModInt))
 		out(result){
 			if(rhs.value)
 				assert(result.value<result.mod && result.value<result.mod);
-			else
-				assert(result.infinite);
+			/*else
+				assert(result.infinite);*/
 		}
 		body{
 			/*if(rhs.value==0)
