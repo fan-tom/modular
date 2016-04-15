@@ -49,6 +49,7 @@ unittest {
 struct ModInt(V, M) if(is(typeof(V.init%M.init)))
 {
 	private:
+		alias value_ this;
 		V value_;
 		M module_;
 		//bool _infinite=false;
