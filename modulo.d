@@ -165,7 +165,7 @@ struct ModInt(V, M) if(is(typeof(V.init%M.init)))
 		// TODO check type carefully
 		@property auto value(T)(T val_) nothrow
 		{
-			value_=val_;
+			value_=.mod(val_, module_);
 		}
 
 		//getter
@@ -179,6 +179,8 @@ struct ModInt(V, M) if(is(typeof(V.init%M.init)))
 		{
 			// TODO check mod_ sign? is that necessary?
 			module_=mod_;
+			// recalculate value due to module changing
+			value=value_;
 		}
 
 		//What can be reasonable init value for value_ and especially for module_?
