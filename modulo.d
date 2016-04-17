@@ -215,7 +215,8 @@ struct ModInt(V, M) if(is(typeof(V.init%M.init)))
 		auto opOpAssign(string op, T: ModInt)(in T rhs) if((op=="+" || op=="-") )//&& is(T: ModInt))
 		{
 			if(checkMod(rhs.mod)){
-				return ModInt(mixin("value"~op~"rhs.value"),mod);
+				mixin("value=value_"~op~"rhs.value;");
+				return this;
 			}
 			throw new ModulesAreNotTheSame(mod, rhs.mod);
 		}
