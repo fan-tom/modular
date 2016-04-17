@@ -104,29 +104,55 @@ struct ModInt(V, M) if(is(typeof(V.init%M.init)))
 		// Fast multiplication and exponentiation by consecutive doubling
 		auto fastOp(string op, T)(T rhs_) const
 		{
+			debug op.writeln;
+
 			static if(op=="*"){
 				enum lower="+";
-				V t=0;
+				ModInt t=ModInt(0,module_);
 			}
 			else static if(op=="^^"){
 				enum lower="*";
-				V t=1;
+				ModInt t=ModInt(1,module_);
 			}
 			else
 				static assert(false, "This operation: "~op~" cannot be done by consecutive doubling");
 
+			auto sign=rhs_<0?-1:1;
+			debug{
+				"t=".writeln(t.text);
+				"sign=".writeln(sign.text);
+			}
 			//what if T is class???
-			Unqual!T rhs=rhs_;
+			//maybe abs() is better?
+			Unqual!T rhs=rhs_*sign;
 			V res=value;
+			debug{
+				"rhs=".writeln(rhs.text);
+				"res=".writeln(res.text);
+			}
 			while(rhs>0){
 				if(rhs%2){
-					mixin("t=t"~lower~"res%module_;");
+					mixin("t=t"~lower~"res;");
+					//mixin("t"~lower~"=res");
 					rhs-=1;
+					debug{
+						"\t\tt=".writeln(t.text);
+						"\t\trhs=".writeln(rhs.text);
+					}
 				}
-				 mixin("res=res"~op~"2%module_;");
+				mixin("res=res"~op~"2%module_;");
 				rhs/=2;
+				debug{
+					"\tres=".writeln(res.text);
+					"\trhs=".writeln(rhs.text);
+				}
 			}
-			return t;
+
+			debug "return t=".writeln(t.text);
+			static if(op=="*")
+				return sign*t;
+			else
+				return sign>0?t:t.inverse;
 		}
 
 	public:
