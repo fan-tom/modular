@@ -188,7 +188,13 @@ struct ModInt(V, M) if(is(typeof(V.init%M.init)))
 
 		this(in V val_, in M mod_){
 			module_=mod_;
-			value_=val_.mod(mod_);//(val_>=0?val_%mod:(mod-(-val_%mod)));
+			value_=val_.mod(mod_);
+		}
+
+		const auto opBinary(string op, T)(in T rhs) if((op=="+" || op=="-") && isIntegral!(T))
+		{
+			ModInt res=this;
+			return res.opOpAssign!op(rhs);
 		}
 
 		auto opOpAssign(string op, T)(in T rhs) if((op=="+" || op=="-") && isIntegral!(T))
