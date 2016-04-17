@@ -13,8 +13,8 @@ import std.math;
 // Exception thrown when operation cannot be done due to different modules
 // of arguments
 class ModulesAreNotTheSame:Exception{
-	this(string mes){
-		super(mes);
+	this(M1, M2)(M1 m1, M2 m2){
+		super("Operands have different modules: "~m1.to!string~" and "~m2.to!string);
 	}
 }
 
@@ -190,7 +190,7 @@ struct ModInt(V, M) if(is(typeof(V.init%M.init)))
 			if(checkMod(rhs.mod)){
 				return ModInt(mixin("value"~op~"rhs.value"),mod);
 			}
-			throw new ModulesAreNotTheSame("Operands have different modiles: "~mod.to!string~" and "~rhs.mod.to!string);
+			throw new ModulesAreNotTheSame(mod, rhs.mod);
 		}
 
 		//Division is multiplication on inverse element a/b mod n =a*b^-1 mod n
