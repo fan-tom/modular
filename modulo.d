@@ -81,6 +81,9 @@ body{
 // such as fast multiplying and exponentiation
 struct ModInt(V, M) if(is(typeof(V.init%M.init)))
 {
+	invariant {
+		assert(value_>=0 && value_<module_.abs);
+	}
 	private:
 		alias value_ this;
 		V value_;
