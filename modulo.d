@@ -41,6 +41,39 @@ unittest {
 	assert(BigInt(-11).mod(-8)==5);
 }
 
+// Calculates inverse for given value modulo mod using
+// Extended Euclidean algorithm.
+auto inverse(V, M)(in V value, in M mod)
+in{
+	assert(mod!=0, "Division by zero");
+}
+out(result){
+	assert(value*result%mod==1, text(value,'*',result,'%',mod,'=',value*result%mod));
+}
+body{
+	static if(is(typeof({ V v=M.init; })))
+		//V can be assigned from M
+		alias CommonType=Unqual!V;
+	else if(is(typeof({ M m=V.init; })))
+		//M can be assigned from V
+		alias CommonType=Unqual!M;
+	else
+		static assert(false, "No common type for "~V.stringof~" and "~M.stringof);
+
+	CommonType a=value, r, xn=1, yn=0, yn_, b=mod;
+	while(a*b>0){
+		r=b%a;
+		yn_=yn;
+		yn=xn;
+		xn=yn_-b/a*xn;
+		b=a;
+		a=r;
+	}
+	if(b==1)
+		return yn>=0?yn:mod+yn;
+	throw new Error(text("Cannot calculate inverse for ",value," modulo ",mod));
+}
+
 // Struct ModInt represents number that is reminder of division on the module,
 // which is also stored in structure.
 // All operations are available, some of them are done using special methods,
@@ -55,31 +88,7 @@ struct ModInt(V, M) if(is(typeof(V.init%M.init)))
 		//bool _infinite=false;
 
 		auto inverse() const {
-			// Extended Euclidean algorithm.
-			auto eea() const {
-				static if(is(typeof({ V v=M.init; })))
-				//V can be assigned from M
-					alias CommonType=V;
-				else if(is(typeof({ M m=V.init; })))
-				//M can be assigned from V
-					alias CommonType=M;
-				else 
-					static assert(false, "No common type for "~V.stringof~" and "~M.stringof);
-
-				CommonType a=value, r, xn=1, yn=0, yn_, b=mod;
-				while(a*b>0){
-					r=b%a;
-					yn_=yn;
-					yn=xn;
-					xn=yn_-b/a*xn;
-					b=a;
-					a=r;
-				}
-				if(b==1)
-					return yn>=0?yn:mod+yn;
-				throw new Error(text("Cannot calculate inverse for ",value," modulo ",mod));
-			}
-			return ModInt!(V,M)(eea(),mod);
+			return ModInt!(V,M)(value.inverse(mod),mod);
 		}
 
 		///Check if modules are the same
