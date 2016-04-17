@@ -9,6 +9,7 @@ module modular;
 import std.traits;
 import std.conv;
 import std.math;
+import std.stdio;
 
 // Exception thrown when operation cannot be done due to different modules
 // of arguments
@@ -251,8 +252,15 @@ unittest{
 	auto b=a+3;
 	assert(b.value==(3+10%4)%4);
 	assert(b.mod==4);
-	assert(( a/b ).value==2);
-	assert((ModInt!(int,uint)(15,11)^^3).value==9);
+	assert((a/b).value==2);
+	//Not working yet
+	/*auto c=3+a;
+	assert(c.value==(3+10%4)%4);
+	assert(c.mod==4);*/
+	int res=(ModInt!(int,uint)(15,11)^^3).value;
+	assert(res==9, res.text);
+	res=(ModInt!(int,uint)(15,11)^^a).value;
+	assert(res==(15^^a.value)%11, res.text);
 }
 
 // Factory function to avoid explicit type indication using IFTI
@@ -270,4 +278,9 @@ unittest{
 	auto bigi=modint(BigInt("100"),3);
 	assert(bigi.value==1);
 	assert(bigi.mod==3);
+	auto wrong=bigi;
+	wrong.value=wrong.mod+1;
+	assert(wrong.value==1);
+	wrong+=wrong.mod;
+	assert(&wrong);
 }
