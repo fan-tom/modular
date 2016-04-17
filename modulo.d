@@ -19,9 +19,9 @@ class ModulesAreNotTheSame:Exception{
 }
 
 // Function that implements mathematic modulo division in opposite to native
-// D's '%' operator; particulary -1%4==-1 while -1.mod(4)==3. In other words
-// the result of a%b always satisfies 0<=a%b<|b|
-auto mod(D1, D2)(D1 divident, D2 divider) if(is(typeof(D1.init%D2.init)) && is(typeof(abs(D2.init))) && is(typeof(abs(D2.init)+D1.init%D2.init)))
+// D's '%' operator; particulary (-1)%4==-1 while (-1).mod(4)==3.
+// In other words, the result of a%b always satisfies 0<=a%b<|b|
+auto mod(D1, D2)(in D1 divident, in D2 divider) if(is(typeof(D1.init%D2.init)) && is(typeof(abs(D2.init))) && is(typeof(abs(D2.init)+D1.init%D2.init)))
 in {
 	assert(divider!=0, "Division by zero");
 }
@@ -76,7 +76,7 @@ body{
 
 // Struct ModInt represents number that is reminder of division on the module,
 // which is also stored in structure.
-// All operations are available, some of them are done using special methods,
+// All operations are available, some of them are done by using special methods,
 // which do these operation more effective,
 // such as fast multiplying and exponentiation
 struct ModInt(V, M) if(is(typeof(V.init%M.init)))
@@ -93,11 +93,7 @@ struct ModInt(V, M) if(is(typeof(V.init%M.init)))
 			return ModInt!(V,M)(value.inverse(mod),mod);
 		}
 
-		///Check if modules are the same
-		///
-		/// Params:
-		///
-		/// M =
+		//Checks if modules are the same
 		auto checkMod(M)(M m) const pure
 		{
 			return module_==m;
@@ -164,8 +160,9 @@ struct ModInt(V, M) if(is(typeof(V.init%M.init)))
 		{
 			return value_;
 		}
-		
+
 		//setter
+		// TODO check type carefully
 		@property auto value(T)(T val_) nothrow
 		{
 			value_=val_;
@@ -180,6 +177,7 @@ struct ModInt(V, M) if(is(typeof(V.init%M.init)))
 		//setter
 		@property auto mod(T)(T mod_) nothrow
 		{
+			// TODO check mod_ sign? is that necessary?
 			module_=mod_;
 		}
 
