@@ -85,7 +85,6 @@ struct ModInt(V, M) if(is(typeof(V.init%M.init)))
 		alias value_ this;
 		V value_;
 		M module_;
-		//bool _infinite=false;
 
 		auto inverse() const {
 			return ModInt!(V,M)(value.inverse(mod),mod);
@@ -188,31 +187,24 @@ struct ModInt(V, M) if(is(typeof(V.init%M.init)))
 			module_=mod_;
 			value_=val_.mod(mod_);//(val_>=0?val_%mod:(mod-(-val_%mod)));
 		}
-		/*static  auto infinity(){
-			return new ModInt();
-		}*/
-		/*@property const pure bool infinite(){
-			return _infinite;
-		}*/
-		const auto opBinary(string op, T)(in T rhs) if((op=="+" || op=="*" || op=="-") && isIntegral!(T))
-		out(result){
-			assert(result.value<result.mod,text(value,op,rhs,'=',result.value));
+
+		auto opOpAssign(string op, T)(in T rhs) if((op=="+" || op=="-") && isIntegral!(T))
+		{
+			mixin("value=value_"~op~"rhs;");
+			return this;
 		}
-		body{
-			/*if(infinite)
-				return infinity();*/
-			return ModInt(mixin("value"~op~"rhs"),mod);
+
+		const auto opBinary(string op, T: ModInt)(in T rhs) if((op=="+" || op=="-") )//&& is(T: ModInt))
+		{
+			if(checkMod(rhs.mod)){
+				auto res=this;
+				return res.opOpAssign!op(rhs);
+			}
+			throw new ModulesAreNotTheSame(mod, rhs.mod);
 		}
-		const auto opBinary(string op, T)(in T rhs) if((op=="+" || op=="-") && is(T: ModInt))
-		out(result){
-			/*if(infinite || rhs.infinite)
-				assert(result.infinite,text(this.value,op,rhs.value,'=',result.value," mod ",result.mod));
-			else*/
-				assert(result.value<result.mod,text(this.value,op,rhs.value,'=',result.value," mod ",result.mod));
-		}
-		body{
-			/*if(infinite || rhs.infinite)
-				return infinity();*/
+
+		auto opOpAssign(string op, T: ModInt)(in T rhs) if((op=="+" || op=="-") )//&& is(T: ModInt))
+		{
 			if(checkMod(rhs.mod)){
 				return ModInt(mixin("value"~op~"rhs.value"),mod);
 			}
@@ -221,15 +213,7 @@ struct ModInt(V, M) if(is(typeof(V.init%M.init)))
 
 		//Division is multiplication on inverse element a/b mod n =a*b^-1 mod n
 		const auto opBinary(string op, T)(in T rhs) if((op=="/") && is(T: ModInt))
-		out(result){
-			if(rhs.value)
-				assert(result.value<result.mod && result.value<result.mod);
-			/*else
-				assert(result.infinite);*/
-		}
-		body{
-			/*if(rhs.value==0)
-				return ModInt.infinity();*/
+		{
 			return this*rhs.inverse;
 		}
 
