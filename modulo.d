@@ -234,9 +234,20 @@ struct ModInt(V, M) if(is(typeof(V.init%M.init)))
 		}
 
 		//Fast powering and multiplying
-		const auto opBinary(string op, T)(in T rhs) if(op=="^^" || op=="*" )
+		auto opBinary(string op, T)(in T rhs) const if(op=="^^" || op=="*" )
 		{
-			return ModInt(fastOp!op(rhs), module_);
+			static if(is(T: ModInt)){
+				static if(op=="*")
+					if(!checkMod(rhs.module_))
+						throw new ModulesAreNotTheSame(mod, rhs.mod);
+				auto arg=rhs.value;
+			}
+			else
+				alias arg=rhs;
+			auto res=ModInt(fastOp!op(arg), module_);
+			return res;
+			/*else
+				assert(false, "Unsupported type: "~T.stringof);*/
 		}
 }
 unittest{
